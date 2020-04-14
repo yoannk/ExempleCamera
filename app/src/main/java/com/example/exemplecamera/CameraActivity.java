@@ -73,14 +73,21 @@ public class CameraActivity extends AppCompatActivity {
                 String path = "";
 
                 if (photo != null) {
+                    // enregistrement de l'image dans le storage (DCIM)
                     try {
                         path = savePhoto(photo, "test.jpg");
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    ImageView imgPhoto = findViewById(R.id.imgPhoto);
-                    imgPhoto.setImageBitmap(photo);
+                    // chargement de l'image depuis le storage (DCIM)
+                    try {
+                        Bitmap bitmap = loadPhoto(path, "test.jpg");
+                        ImageView imgPhoto = findViewById(R.id.imgPhoto);
+                        imgPhoto.setImageBitmap(bitmap);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
@@ -96,7 +103,7 @@ public class CameraActivity extends AppCompatActivity {
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
         fos.close();
 
-        return path.getAbsolutePath();
+        return path.getParent();
     }
 
     private Bitmap loadPhoto(String path, String nomPhoto) throws FileNotFoundException {
