@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class CameraActivity extends AppCompatActivity {
 
@@ -32,7 +37,6 @@ public class CameraActivity extends AppCompatActivity {
         setContentView(R.layout.activity_camera);
 
         context = this;
-        File photostorage = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
 
         Button btnCamera = findViewById(R.id.btnCamera);
         //file = new File(photostorage, "temp.jpg");
@@ -66,12 +70,37 @@ public class CameraActivity extends AppCompatActivity {
                 // on récupère la photo à partir de l'intent
                 Bundle extras = intent.getExtras();
                 photo = (Bitmap) extras.get("data");
+                String path = "";
 
-                if(photo != null) {
+                if (photo != null) {
+                    try {
+                        path = savePhoto(photo, "test.jpg");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     ImageView imgPhoto = findViewById(R.id.imgPhoto);
                     imgPhoto.setImageBitmap(photo);
                 }
             }
         }
+    }
+
+    private String savePhoto(Bitmap bitmap, String nomPhoto) throws IOException {
+        // répertoire ou l'on sauvegarde l'image
+        File photostorage = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+        // fichier du nom de la photo
+        File path = new File(photostorage, nomPhoto);
+
+        FileOutputStream fos = new FileOutputStream(path);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+        fos.close();
+
+        return path.getAbsolutePath();
+    }
+
+    private Bitmap loadPhoto(String path, String nomPhoto) throws FileNotFoundException {
+        File file = new File(path, nomPhoto);
+        return BitmapFactory.decodeStream(new FileInputStream(file));
     }
 }
