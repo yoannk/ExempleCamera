@@ -32,4 +32,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Enregistrer photo" />
+
+    <Button
+        android:id="@+id/btnVoirPhotosEnregistrees"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Voir photos enregistrées" />
 </LinearLayout>

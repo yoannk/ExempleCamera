@@ -40,6 +40,7 @@ public class CameraActivity extends AppCompatActivity {
 
         Button btnCamera = findViewById(R.id.btnCamera);
         Button btnSavePhoto = findViewById(R.id.btnSavePhoto);
+        Button btnVoirPhotosEnregistrees = findViewById(R.id.btnVoirPhotosEnregistrees);
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -77,11 +78,22 @@ public class CameraActivity extends AppCompatActivity {
 
                 if (photo != null) {
                     try {
-                        path = savePhoto(photo, nomPhoto + ".jpg");
+                        nomPhoto += ".jpg";
+                        path = savePhoto(photo, nomPhoto);
+                        Toast.makeText(context, nomPhoto + " a bien été enregistrée", Toast.LENGTH_SHORT).show();
                     } catch (IOException e) {
                         Toast.makeText(context, "Une erreur est survenue pendant l'enregistrement de la photo", Toast.LENGTH_SHORT).show();
                     }
                 }
+            }
+        });
+
+        btnVoirPhotosEnregistrees.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ViewPhotoActivity.class);
+                intent.putExtra("path", path);
+                startActivity(intent);
             }
         });
     }
@@ -96,23 +108,13 @@ public class CameraActivity extends AppCompatActivity {
                 Bundle extras = intent.getExtras();
                 photo = (Bitmap) extras.get("data");
 
-                /*if (photo != null) {
-                    // enregistrement de l'image dans le storage (DCIM)
-                    try {
-                        path = savePhoto(photo, "test.jpg");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                if (photo != null) {
+                    ImageView imgPhoto = findViewById(R.id.imgPhoto);
+                    imgPhoto.setImageBitmap(photo);
+                }
 
-                    // chargement de l'image depuis le storage (DCIM)
-                    try {
-                        Bitmap bitmap = loadPhoto(path, "test.jpg");
-                        ImageView imgPhoto = findViewById(R.id.imgPhoto);
-                        imgPhoto.setImageBitmap(bitmap);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }*/
+                ImageView imgPhoto = findViewById(R.id.imgPhoto);
+                imgPhoto.setImageBitmap(photo);
             }
         }
     }
@@ -128,10 +130,5 @@ public class CameraActivity extends AppCompatActivity {
         fos.close();
 
         return path.getParent();
-    }
-
-    private Bitmap loadPhoto(String path, String nomPhoto) throws FileNotFoundException {
-        File file = new File(path, nomPhoto);
-        return BitmapFactory.decodeStream(new FileInputStream(file));
     }
 }
