@@ -13,6 +13,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -25,8 +26,9 @@ import java.io.IOException;
 public class CameraActivity extends AppCompatActivity {
 
     Context context;
-    File file;
+    Bitmap photo;
     Uri uri;
+    String path;
 
 
     @Override
@@ -37,6 +39,7 @@ public class CameraActivity extends AppCompatActivity {
         context = this;
 
         Button btnCamera = findViewById(R.id.btnCamera);
+        Button btnSavePhoto = findViewById(R.id.btnSavePhoto);
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,11 +58,36 @@ public class CameraActivity extends AppCompatActivity {
                 }
             }
         });
+
+        btnSavePhoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                EditText txtNomPhoto = findViewById(R.id.txtNomPhoto);
+                String nomPhoto = txtNomPhoto.getText()
+                        .toString()
+                        .replaceAll("\\W+", "") // replaces any character that isn't a number, letter or underscore with nothing
+                        .trim()
+                        .toLowerCase();
+
+                if (nomPhoto.isEmpty()) {
+                    Toast.makeText(context, "Veuillez saisir un nom de photo", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (photo != null) {
+                    try {
+                        path = savePhoto(photo, nomPhoto + ".jpg");
+                    } catch (IOException e) {
+                        Toast.makeText(context, "Une erreur est survenue pendant l'enregistrement de la photo", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        Bitmap photo;
 
         if (requestCode == 100 && resultCode == RESULT_OK) { // mode camera
             if (intent != null && intent.hasExtra("data")) {
@@ -67,9 +95,8 @@ public class CameraActivity extends AppCompatActivity {
                 // on récupère la photo à partir de l'intent
                 Bundle extras = intent.getExtras();
                 photo = (Bitmap) extras.get("data");
-                String path = "";
 
-                if (photo != null) {
+                /*if (photo != null) {
                     // enregistrement de l'image dans le storage (DCIM)
                     try {
                         path = savePhoto(photo, "test.jpg");
@@ -85,7 +112,7 @@ public class CameraActivity extends AppCompatActivity {
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
-                }
+                }*/
             }
         }
     }

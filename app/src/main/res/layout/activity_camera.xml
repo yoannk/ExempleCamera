@@ -18,4 +18,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:srcCompat="@drawable/ic_launcher_background" />
+
+    <EditText
+        android:id="@+id/txtNomPhoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Nom de la photo"
+        android:inputType="textPersonName" />
+
+    <Button
+        android:id="@+id/btnSavePhoto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enregistrer photo" />
 </LinearLayout>
